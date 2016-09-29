@@ -4,6 +4,7 @@
 
 from flask import Flask
 from flask.ext.script import Manager
+from flask import render_template
 
 application = Flask(__name__)
 
@@ -13,12 +14,12 @@ manager = Manager(application);
 # index view process
 @application.route('/')
 def index():
-    return '<h1>Hello Flask!</h1>'
+    return render_template('index.html')
 
 # view process with parameters
 @application.route('/<username>')
 def userinfo(username):
-    return '<h1>Welcome %s back!</h1>' % username
+    return render_template('user.html', name=username)
 
 if __name__ == '__main__':
     manager.run()
