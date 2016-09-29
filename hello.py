@@ -6,6 +6,8 @@ from flask import Flask
 from flask.ext.script import Manager
 from flask import render_template
 from flask.ext.bootstrap import Bootstrap
+from flask.ext.moment import Moment
+from datetime import datetime
 
 application = Flask(__name__)
 
@@ -15,10 +17,13 @@ manager = Manager(application);
 # init application by bootstrap
 bootstrap = Bootstrap(application)
 
+# init application by moment
+moment = Moment(application)
+
 # index view process
 @application.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', current_time=datetime.utcnow())
 
 # view process with parameters
 @application.route('/<username>')
