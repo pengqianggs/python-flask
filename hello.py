@@ -2,28 +2,44 @@
 # _*_ coding: utf-8 _*_
 # Desc: This is a test python program.
 
+# init application by flask
 from flask import Flask
-from flask.ext.script import Manager
-from flask import render_template
-from flask.ext.bootstrap import Bootstrap
-from flask.ext.moment import Moment
-from datetime import datetime
-
 application = Flask(__name__)
+application.config['SECRET_KEY']='learning flask'
 
 # init application by manager
+from flask_script import Manager
 manager = Manager(application);
 
 # init application by bootstrap
+from flask_bootstrap import Bootstrap
 bootstrap = Bootstrap(application)
 
 # init application by moment
+from flask_moment import Moment
 moment = Moment(application)
 
+# add form support 
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import Required
+class NameForm(FlaskForm):
+    name=StringField('what is your name?', validators=[Required()])
+    submit=SubmitField('Submit')
+
 # index view process
-@application.route('/')
+from flask import render_template, session, redirect, url_for, flash
+from datetime import datetime
+@application.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html', current_time=datetime.utcnow())
+    form=NameForm()
+    if form.validate_on_submit():
+        old_name=session.get('name')
+        if old_name is not None and old_name != form.name.data:
+            flash('name already changed!')
+        session['name']=form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html', name=session.get('name'), form=form)
 
 # view process with parameters
 @application.route('/<username>')
