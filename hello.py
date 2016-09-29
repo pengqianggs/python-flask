@@ -3,8 +3,12 @@
 # Desc: This is a test python program.
 
 from flask import Flask
+from flask.ext.script import Manager
 
 application = Flask(__name__)
+
+# init application use manager
+manager = Manager(application);
 
 # index view process
 @application.route('/')
@@ -17,4 +21,4 @@ def userinfo(username):
     return '<h1>Welcome %s back!</h1>' % username
 
 if __name__ == '__main__':
-    application.run(host='127.0.0.1', port=6688)
+    manager.run()
