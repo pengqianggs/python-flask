@@ -57,6 +57,23 @@ from flask_migrate import Migrate, MigrateCommand
 migrate=Migrate(application, db)
 manager.add_command('db', MigrateCommand)
 
+# add mail support
+from flask_mail import Mail, Message
+application.config['MAIL_SERVER']=os.environ.get('MAIL_SERVER')
+application.config['MAIL_PORT']=os.environ.get('MAIL_PORT')
+application.config['MAIL_USERNAME']=os.environ.get('MAIL_USERNAME')
+application.config['MAIL_PASSWORD']=os.environ.get('MAIL_PASSWORD')
+application.config['MAIL_USE_SSL']=os.environ.get('MAIL_USE_SSL', False)
+application.config['MAIL_USE_TLS']=os.environ.get('MAIL_USE_TLS', False)
+application.config['MAIL_SENDER']=os.environ.get('MAIL_SENDER')
+mail = Mail(application)
+
+def send_mail(to, subject, template, **kwargs):
+    message=Message(subject, sender=application.config['MAIL_SENDER'], recipients=[to])
+    message.body=render_template(template+'.txt', **kwargs)
+    message.html=render_template(template+'.html', **kwargs)
+    mail.send(message)
+
 # add form support 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -77,6 +94,7 @@ def index():
             user=User(user_name=form.name.data)
             db.session.add(user)
             session['known']=False
+            send_mail('pengqiang5@asiainfo.com', 'New User', 'mail/new_user', name=form.name.data)
         else:
             session['known']=True
         session['name']=form.name.data

@@ -1,0 +1,3 @@
+Hi,
+    There is a new user named {{ name }} registered!
+    best regards!
