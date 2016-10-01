@@ -19,6 +19,44 @@ bootstrap = Bootstrap(application)
 from flask_moment import Moment
 moment = Moment(application)
 
+# add sqlalchemy support
+import os
+from flask_sqlalchemy import SQLAlchemy
+basedir=os.path.abspath(os.path.dirname(__file__))
+application.config['SQLALCHEMY_DATABASE_URI']='sqlite:///'+os.path.join(basedir, 'data.sqlite')
+application.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
+db = SQLAlchemy(application)
+class Role(db.Model):
+    __tablename__='role'
+    role_id=db.Column(db.Integer, primary_key=True)
+    role_name=db.Column(db.String(32), unique=True)
+
+    def __repr__(self):
+        return 'role <%r>' % self.role_name
+
+class User(db.Model):
+    __tablename__='user'
+    user_id=db.Column(db.Integer, primary_key=True)
+    user_name=db.Column(db.String(32), unique=True, index=True)
+    role_id=db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return 'user <%r>' % self.user_name
+
+# create db table
+db.create_all()
+
+# add python shell support
+from flask_script import Shell
+def make_shell_context():
+    return dict(application=application, db=db, User=User, Role=Role)
+manager.add_command('shell', Shell(make_context=make_shell_context))
+
+# add python migrate support
+from flask_migrate import Migrate, MigrateCommand
+migrate=Migrate(application, db)
+manager.add_command('db', MigrateCommand)
+
 # add form support 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -34,12 +72,17 @@ from datetime import datetime
 def index():
     form=NameForm()
     if form.validate_on_submit():
-        old_name=session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('name already changed!')
+        user=User.query.filter_by(user_name=form.name.data).first()
+        if user is None:
+            user=User(user_name=form.name.data)
+            db.session.add(user)
+            session['known']=False
+        else:
+            session['known']=True
         session['name']=form.name.data
+        form.name.data=''
         return redirect(url_for('index'))
-    return render_template('index.html', name=session.get('name'), form=form)
+    return render_template('index.html', form=form, name=session.get('name', None), known=session.get('known', False))
 
 # view process with parameters
 @application.route('/<username>')
