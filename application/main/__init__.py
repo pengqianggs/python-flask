@@ -7,3 +7,7 @@ from flask import Blueprint
 main = Blueprint('main', __name__)
 from . import views, errors
 
+# register permission into context
+@main.app_context_processor
+def register_permission():
+    return dict(Permission=Permission)
