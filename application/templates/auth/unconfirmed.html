@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}User Unconfirm{% endblock %}
+
+{% block page_content %}
+<h1>Hello, {{ current_user.username }}</h1>
+<h3>You have not confirmed your account yet!</h3>
+<p>In order that you can access this website normally, please confirm your account.</p>
+<p>Confirm Email had already sent to your mail inbox, please check!</p>
+<br>
+<p>Need another confirm Email? please click <a href='{{ url_for("auth.resend_confirm") }}'>here</a>!</p>
+{% endblock %}

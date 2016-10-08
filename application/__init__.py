@@ -21,6 +21,12 @@ database = SQLAlchemy()
 from flask_mail import Mail
 mail = Mail()
 
+# add login support
+from flask_login import LoginManager
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'auth.login'
+
 # add config
 from config import config
 
@@ -30,7 +36,6 @@ def create_application(config_name):
 
     # init application by configuration
     application.config.from_object(config[config_name]())
-    config[config_name].init_app(application)
 
     # init application by bootstrap
     bootstrap.init_app(application)
@@ -44,11 +49,18 @@ def create_application(config_name):
     # init application by mail
     mail.init_app(application)
 
+    # inir application by login manager
+    login_manager.init_app(application)
+
     # init application by other module
 
     # register main blueprint
     from .main import main as main_blueprint
     application.register_blueprint(main_blueprint)
+
+    # register auth blueprint, and add url_prefix
+    from .auth import auth as auth_blueprint
+    application.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     # return application instance
     return application

@@ -4,11 +4,11 @@
 
 from . import mail
 from flask_mail import Message
-from ..manage import application
+from flask import current_app, render_template
 
 # send mail sync
 def send_mail(to, subject, template, **kwargs):
-    message=Message(subject, sender=application.config['MAIL_SENDER'], recipients=[to])
+    message=Message(subject, sender=current_app.config['MAIL_SENDER'], recipients=[to])
     message.body=render_template(template+'.txt', **kwargs)
     message.html=render_template(template+'.html', **kwargs)
     mail.send(message)
