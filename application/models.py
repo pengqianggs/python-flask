@@ -57,8 +57,11 @@ class User(UserMixin, database.Model):
     name=database.Column(database.String(32), unique=True, index=True)
     email=database.Column(database.String(32), unique=True, index=True)
     password=database.Column(database.String(128))
-    role_id=database.Column(database.Integer, database.ForeignKey('roles.id'))
+    role_id=database.Column(database.Integer, database.ForeignKey('role.id'))
     confirmed=database.Column(database.Boolean, default=False)
+    realname=database.Column(database.String(32))
+    location=database.Column(database.String(64))
+    aboutme=database.Column(database.Text())
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)

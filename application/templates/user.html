@@ -1,9 +1,24 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title%}User Info{% endblock %}
+{% block title %}User Information{% endblock %}
 
 {% block page_content %}
 <div class='page-header'>
-    <h1>Hello, {{ name }}</h1>
+    <h1>User {{ user.name }} Information</h1><br>
+    <p>Username: {{ user.name }}</p>
+    <p>E-mail  : {{ user.email }}</p>
+    {% if user.realname %}
+    <p>Realname: {{ user.realname }}
+    {% endif %}
+    {% if user.location %}
+    <p>Location: {{ user.location }}
+    {% endif %}
+    {% if user.aboutme %}
+    <p>Aboutme : {{ user.aboutme }}
+    {% endif %}
+    <br><br>
+    {% if user.email == current_user.email  %}
+        <p>Click <a href='{{ url_for("main.edit_profile") }}'>here</a> to modify profile.</p>
+    {% endif %}
 </div>
 {% endblock %}

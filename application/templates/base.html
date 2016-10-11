@@ -36,9 +36,15 @@
                         <span class='caret'></span>
                     </a>
                     <ul class='dropdown-menu' role='menu'>
-                        <li role='presentation'><a role='menuitem' tabindex='-1' href='#'>ChangePassword</a></li>
-                        <li role='presentation'><a role='menuitem' tabindex='-1' href='#'>EditProfile</a></li>
-                        <li role='presentation'><a role='menuitem' tabindex='-1' href='#'>Logout</a></li>
+                        <li role='presentation'>
+                            <a role='menuitem' href='{{ url_for("main.change_password") }}'>ChangePassword</a>
+                        </li>
+                        <li role='presentation'>
+                            <a role='menuitem' href='{{ url_for("main.user", username=current_user.name) }}'>Profile</a>
+                        </li>
+                        <li role='presentation'>
+                            <a role='menuitem' href='{{ url_for("auth.logout") }}'>Logout</a>
+                        </li>
                     </ul>
                 </li>
                 {% else %}

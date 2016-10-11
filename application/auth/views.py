@@ -13,10 +13,6 @@ from flask_login import login_user, logout_user, current_user, login_required
 # register unconfirmed user intercept hook
 @auth.before_app_request
 def before_request():
-    print "current_user.name = ", (current_user.name)
-    print "current_user.confirmed = ", (current_user.confirmed)
-    print "current_user.is_authenticated = ", current_user.is_authenticated
-    print "request.endpoint = ", request.endpoint
     if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.endpoint[:5] != 'auth.' \
@@ -52,7 +48,7 @@ def login():
 def logout():
     logout_user()
     flash('You have been logged out.')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('auth.login'))
 
 # user register view
 @auth.route('/register', methods=['GET', 'POST'])
